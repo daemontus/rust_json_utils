@@ -39,7 +39,7 @@ pub trait JsonMap {
     //helper functions for modifying data
 
     /// Write an item that implements the ToJson trait.
-    fn write_item<T: ToJson>(&mut self, key: &str, item: T);
+    fn write_item<T: ToJson>(&mut self, key: &str, item: &T);
 }
 
 // Implementations of FromJson for basic types
@@ -115,7 +115,7 @@ impl JsonMap for Object {
         }
     }
 
-    fn write_item<T: ToJson>(&mut self, key: &str, item: T) {
+    fn write_item<T: ToJson>(&mut self, key: &str, item: &T) {
         self.insert(key.to_string(), item.to_json());
     }
 }

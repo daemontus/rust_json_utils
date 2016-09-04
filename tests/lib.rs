@@ -117,7 +117,7 @@ fn read_invalid_option() {
 #[test]
 fn read_write_item() {
     let mut map = Object::new();
-    map.write_item("test", 12);
+    map.write_item("test", &12);
     assert_eq!(12, map.read_item::<i64>("test").unwrap());
 }
 
@@ -131,7 +131,7 @@ fn read_missing_item() {
 #[test]
 fn read_write_optional_item() {
     let mut map = Object::new();
-    map.write_item("test", Some("Hello".to_string()));
+    map.write_item("test", &Some("Hello".to_string()));
     assert_eq!(Some("Hello".to_string()), map.read_optional_item("test").unwrap());
 }
 
@@ -139,19 +139,19 @@ fn read_write_optional_item() {
 fn read_missing_optional_item() {
     let mut map = Object::new();
     assert_eq!(None::<f64>, map.read_optional_item("test").unwrap());
-    map.write_item("test", None::<f64>);
+    map.write_item("test", &None::<f64>);
     assert_eq!(None::<f64>, map.read_optional_item("test").unwrap());
 }
 
 #[test]
 fn create_object_test() {
     let result = create_object(|map| {
-        map.write_item("int", 13.to_json());
-        map.write_item("float", 54.3.to_json());
+        map.write_item("int", &13.to_json());
+        map.write_item("float", &54.3.to_json());
     });
     let mut map = Object::new();
-    map.write_item("int", 13.to_json());
-    map.write_item("float", 54.3.to_json());
+    map.write_item("int", &13.to_json());
+    map.write_item("float", &54.3.to_json());
     assert_eq!(Json::Object(map), result);
 }
 
@@ -159,7 +159,7 @@ fn create_object_test() {
 fn as_object_test() {
     let mut map = Object::new();
     let mut map_inner = Object::new();
-    map_inner.write_item("test", "Hello!".to_string());
+    map_inner.write_item("test", &"Hello!".to_string());
     map.insert("inner".to_string(), Json::Object(map_inner));
     let result = map.with_key("inner", |json| {
         as_object(json, |obj| {
@@ -173,7 +173,7 @@ fn as_object_test() {
 #[should_panic(expected = "ExpectedError(\"Object\", \"43\")")]
 fn as_object_invalid_type_test() {
     let mut map = Object::new();
-    map.write_item("test", 43.to_json());
+    map.write_item("test", &43.to_json());
     map.with_key("test", |json| {
         as_object(json, |_| { Ok(12) })
     }).unwrap();
