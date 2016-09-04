@@ -23,8 +23,17 @@ pub trait JsonMap {
         where F: Fn(&Json) -> Result<R, DecoderError>;
 
     /// Read an item based on a given key. Item must implement FromJson.
+    /// Warning: If the type is optional, but the key is missing, this method
+    /// will fail. See read_optional_item.
     fn read_item<T: FromJson<T>>(&self, key: &str) -> Result<T, DecoderError> {
         self.with_key(key, T::from_json)
+    }
+
+    /// Read an optional item based on a given key. Item must implement FromJson.
+    /// Warning: If the type is optional, but the key is missing, this method
+    /// will return None. See read_item.
+    fn read_optional_item<T: FromJson<T>>(&self, key: &str) -> Result<Option<T>, DecoderError> {
+        self.with_optional_key(key, T::from_json)
     }
 
     //helper functions for modifying data
@@ -120,7 +129,7 @@ pub fn create_object<F>(builder: F) -> Json
     Json::Object(result)
 }
 
-fn as_object<F, R>(json: &Json, builder: F) -> Result<R, DecoderError>
+pub fn as_object<F, R>(json: &Json, builder: F) -> Result<R, DecoderError>
     where F: Fn(&Object) -> Result<R, DecoderError> {
     if let &Json::Object(ref map) = json { builder(map) } else { Err(expected("Object", json)) }
 }
