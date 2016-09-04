@@ -3,4 +3,9 @@ name = "json_utils"
 version = "0.1.0"
 authors = ["Samuel Pastva <daemontus@gmail.com>"]
 
+[lib]
+name = "json_utils"
+path = "src/lib.rs"
+
 [dependencies]
+rustc-serialize = "0.3.19"
